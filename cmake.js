@@ -100,7 +100,7 @@ cmd.install = function () {
       zogLog.err (err);
     }
 
-    busClient.events.send ('zogCMake.install.finished');
+    busClient.events.send ('cmake.install.finished');
   });
 };
 
@@ -109,7 +109,7 @@ cmd.install = function () {
  */
 cmd.uninstall = function () {
   zogLog.warn ('the uninstall action is not implemented');
-  busClient.events.send ('zogCMake.uninstall.finished');
+  busClient.events.send ('cmake.uninstall.finished');
 };
 
 /**
