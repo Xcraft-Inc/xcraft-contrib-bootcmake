@@ -3,14 +3,13 @@
 var moduleName = 'cmake';
 
 var path        = require ('path');
-var fs          = require ('fs');
 var async       = require ('async');
 var zogProcess  = require ('xcraft-core-process');
 var zogConfig   = require ('../../scripts/zogConfig.js') ();
 var zogLog      = require ('xcraft-core-log') (moduleName);
 var busClient   = require ('xcraft-core-busclient');
 
-var pkgConfig = JSON.parse (fs.readFileSync (path.join (zogConfig.pkgBaseRoot, moduleName, 'config.json')));
+var pkgConfig = require ('xcraft-core-etc').load ('xcraft-contrib-cmake');
 var cmd = {};
 
 
@@ -130,3 +129,28 @@ exports.xcraftCommands = function () {
 
   return list;
 };
+
+/**
+ * Retrieve the inquirer definition for xcraft-core-etc.
+ */
+exports.xcraftConfig = [{
+  type: 'input',
+  name: 'name',
+  message: 'package name',
+  default: 'cmake'
+}, {
+  type: 'input',
+  name: 'version',
+  message: 'version',
+  default: '3.0.2'
+}, {
+  type: 'input',
+  name: 'src',
+  message: 'source URI',
+  default: 'http://www.cmake.org/files/v3.0/cmake-3.0.2.tar.gz'
+}, {
+  type: 'input',
+  name: 'out',
+  message: 'output directory',
+  default: './usr'
+}];
