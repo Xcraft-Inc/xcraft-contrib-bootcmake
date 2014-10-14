@@ -2,12 +2,12 @@
 
 var moduleName = 'cmake';
 
-var path        = require ('path');
-var async       = require ('async');
-var zogProcess  = require ('xcraft-core-process');
-var zogConfig   = require ('../../scripts/zogConfig.js') ();
-var zogLog      = require ('xcraft-core-log') (moduleName);
-var busClient   = require ('xcraft-core-busclient');
+var path         = require ('path');
+var async        = require ('async');
+var zogProcess   = require ('xcraft-core-process');
+var xcraftConfig = require ('xcraft-core-etc').load ('xcraft');
+var zogLog       = require ('xcraft-core-log') (moduleName);
+var busClient    = require ('xcraft-core-busclient');
 
 var pkgConfig = require ('xcraft-core-etc').load ('xcraft-contrib-cmake');
 var cmd = {};
@@ -69,7 +69,7 @@ var bootstrapRun = function (cmakeDir, callback) {
 cmd.install = function () {
   var archive = path.basename (pkgConfig.src);
   var inputFile  = pkgConfig.src;
-  var outputFile = path.join (zogConfig.tempRoot, 'src', archive);
+  var outputFile = path.join (xcraftConfig.tempRoot, 'src', archive);
 
   async.auto (
   {
