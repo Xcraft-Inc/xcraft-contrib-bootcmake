@@ -117,12 +117,16 @@ cmd.uninstall = function () {
  * @returns {Object[]} The list of commands.
  */
 exports.xcraftCommands = function () {
-  var list = [];
+  var utils  = require ('xcraft-core-utils');
+  var rcFile = path.join (__dirname, './rc.json');
+  var rc     = utils.jsonFile2Json (rcFile);
+  var list   = [];
 
   Object.keys (cmd).forEach (function (action) {
     list.push ({
       name   : action,
-      desc   : '',
+      desc   : rc[action] ? rc[action].desc   : null,
+      params : rc[action] ? rc[action].params : null,
       handler: cmd[action]
     });
   });
