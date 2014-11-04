@@ -17,7 +17,9 @@ var cmd = {};
 var makeRun = function (callback) {
   zogLog.info ('begin building of cmake');
 
-  process.env.SHELL = cmd.exe;
+  if (zogPlatform.getOs () === 'win') {
+    process.env.SHELL = cmd.exe;
+  }
 
   var os = require ('os');
   var list = [
