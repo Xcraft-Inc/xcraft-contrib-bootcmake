@@ -20,6 +20,7 @@
     "xcraft-core-fs": "0.1.0",
     "xcraft-core-http": "0.1.0",
     "xcraft-core-extract": "0.1.0",
+    "xcraft-core-platform": "0.1.0",
     "async": ""
   },
   "author": "Mathieu Schroeter",

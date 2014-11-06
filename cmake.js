@@ -16,9 +16,11 @@ var cmd = {};
 
 /* TODO: must be generic. */
 var makeRun = function (callback) {
-  zogLog.info ('begin building of cmake');
+  xLog.info ('begin building of cmake');
 
-  if (zogPlatform.getOs () === 'win') {
+  var xPlatform = require ('xcraft-core-platform');
+
+  if (xPlatform.getOs () === 'win') {
     process.env.SHELL = cmd.exe;
   }
 
