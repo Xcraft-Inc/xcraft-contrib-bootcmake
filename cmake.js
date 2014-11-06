@@ -5,7 +5,7 @@ var moduleName = 'cmake';
 var path  = require ('path');
 var async = require ('async');
 
-var zogProcess   = require ('xcraft-core-process');
+var xProcess     = require ('xcraft-core-process');
 var xcraftConfig = require ('xcraft-core-etc').load ('xcraft');
 var xLog         = require ('xcraft-core-log') (moduleName);
 var busClient    = require ('xcraft-core-busclient');
@@ -33,7 +33,7 @@ var makeRun = function (callback) {
   async.eachSeries (list, function (args, callback) {
     var fullArgs = ['-j' + os.cpus ().length].concat (args);
 
-    zogProcess.spawn ('make', fullArgs, function (done) {
+    xProcess.spawn ('make', fullArgs, function (done) {
       callback (done ? null : 'make failed');
     }, function (line) {
       xLog.verb (line);
@@ -61,7 +61,7 @@ var bootstrapRun = function (cmakeDir, callback) {
   ];
 
   process.chdir (cmakeDir);
-  zogProcess.spawn ('sh', args, function (done) {
+  xProcess.spawn ('sh', args, function (done) {
     callback (done ? null : 'bootstrap failed');
   }, function (line) {
     xLog.verb (line);
