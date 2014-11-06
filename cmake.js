@@ -2,11 +2,12 @@
 
 var moduleName = 'cmake';
 
-var path         = require ('path');
-var async        = require ('async');
+var path  = require ('path');
+var async = require ('async');
+
 var zogProcess   = require ('xcraft-core-process');
 var xcraftConfig = require ('xcraft-core-etc').load ('xcraft');
-var zogLog       = require ('xcraft-core-log') (moduleName);
+var xLog         = require ('xcraft-core-log') (moduleName);
 var busClient    = require ('xcraft-core-busclient');
 
 var pkgConfig = require ('xcraft-core-etc').load ('xcraft-contrib-cmake');
@@ -33,13 +34,13 @@ var makeRun = function (callback) {
     zogProcess.spawn ('make', fullArgs, function (done) {
       callback (done ? null : 'make failed');
     }, function (line) {
-      zogLog.verb (line);
+      xLog.verb (line);
     }, function (line) {
-      zogLog.warn (line);
+      xLog.warn (line);
     });
   }, function (err) {
     if (!err) {
-      zogLog.info ('cmake is built and installed');
+      xLog.info ('cmake is built and installed');
     }
 
     callback (err ? 'make failed' : null);
@@ -61,9 +62,9 @@ var bootstrapRun = function (cmakeDir, callback) {
   zogProcess.spawn ('sh', args, function (done) {
     callback (done ? null : 'bootstrap failed');
   }, function (line) {
-    zogLog.verb (line);
+    xLog.verb (line);
   }, function (line) {
-    zogLog.warn (line);
+    xLog.warn (line);
   });
 };
 
@@ -101,7 +102,7 @@ cmd.install = function () {
     taskMake: ['taskBootstrap', makeRun]
   }, function (err) {
     if (err) {
-      zogLog.err (err);
+      xLog.err (err);
     }
 
     busClient.events.send ('cmake.install.finished');
@@ -112,7 +113,7 @@ cmd.install = function () {
  * Uninstall the cmake package.
  */
 cmd.uninstall = function () {
-  zogLog.warn ('the uninstall action is not implemented');
+  xLog.warn ('the uninstall action is not implemented');
   busClient.events.send ('cmake.uninstall.finished');
 };
 
