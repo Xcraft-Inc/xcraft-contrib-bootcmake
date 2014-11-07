@@ -89,10 +89,10 @@ cmd.install = function () {
     },
 
     taskExtract: ['taskHttp', function (callback) {
-      var zogExtract = require ('xcraft-core-extract');
+      var xExtract = require ('xcraft-core-extract');
       var outDir = path.dirname (outputFile);
 
-      zogExtract.targz (outputFile, outDir, null, function (done) {
+      xExtract.targz (outputFile, outDir, null, function (done) {
         callback (done ? null : 'extract failed', path.join (outDir, path.basename (outputFile, '.tar.gz')));
       });
     }],
