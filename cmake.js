@@ -81,9 +81,9 @@ cmd.install = function () {
   async.auto (
   {
     taskHttp: function (callback) {
-      var zogHttp = require ('xcraft-core-http');
+      var xHttp = require ('xcraft-core-http');
 
-      zogHttp.get (inputFile, outputFile, function () {
+      xHttp.get (inputFile, outputFile, function () {
         callback ();
       });
     },
