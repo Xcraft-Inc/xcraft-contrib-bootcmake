@@ -21,7 +21,7 @@ var makeRun = function (callback) {
   var xPlatform = require ('xcraft-core-platform');
 
   if (xPlatform.getOs () === 'win') {
-    process.env.SHELL = cmd.exe;
+    process.env.SHELL = 'cmd.exe';
   }
 
   var os = require ('os');
