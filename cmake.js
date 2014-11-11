@@ -6,6 +6,7 @@ var path  = require ('path');
 var async = require ('async');
 
 var xProcess     = require ('xcraft-core-process');
+var xPlatform    = require ('xcraft-core-platform');
 var xcraftConfig = require ('xcraft-core-etc').load ('xcraft');
 var xLog         = require ('xcraft-core-log') (moduleName);
 var busClient    = require ('xcraft-core-busclient');
@@ -14,24 +15,31 @@ var pkgConfig = require ('xcraft-core-etc').load ('xcraft-contrib-cmake');
 var cmd = {};
 
 
+var getJobs = function () {
+  var os = require ('os');
+
+  if (xPlatform.getOs () === 'win') {
+    return 1;
+  }
+
+  return os.cpus ().length;
+};
+
 /* TODO: must be generic. */
 var makeRun = function (callback) {
   xLog.info ('begin building of cmake');
-
-  var xPlatform = require ('xcraft-core-platform');
 
   if (xPlatform.getOs () === 'win') {
     process.env.SHELL = 'cmd.exe';
   }
 
-  var os = require ('os');
   var list = [
     'all',
     'install'
   ];
 
   async.eachSeries (list, function (args, callback) {
-    var fullArgs = ['-j' + os.cpus ().length].concat (args);
+    var fullArgs = ['-j' + getJobs ()].concat (args);
 
     xProcess.spawn ('make', fullArgs, function (done) {
       callback (done ? null : 'make failed');
@@ -53,10 +61,9 @@ var makeRun = function (callback) {
 var bootstrapRun = function (cmakeDir, callback) {
   /* FIXME, TODO: use a backend (a module) for building cmake. */
   /* bootstrap --prefix=/mingw && make && make install */
-  var os = require ('os');
   var args = [
     'bootstrap',
-    '--parallel=' + os.cpus ().length,
+    '--parallel=' + getJobs (),
     '--prefix=' + path.resolve (pkgConfig.out)
   ];
 
