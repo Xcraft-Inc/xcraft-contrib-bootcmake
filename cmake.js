@@ -29,10 +29,6 @@ var getJobs = function () {
 var makeRun = function (callback) {
   xLog.info ('begin building of cmake');
 
-  if (xPlatform.getOs () === 'win') {
-    process.env.SHELL = 'cmd.exe';
-  }
-
   var list = [
     'all',
     'install'
