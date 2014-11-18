@@ -95,8 +95,9 @@ cmd.install = function () {
       var xExtract = require ('xcraft-core-extract');
       var outDir = path.dirname (outputFile);
 
-      xExtract.targz (outputFile, outDir, null, function (done) {
-        callback (done ? null : 'extract failed', path.join (outDir, path.basename (outputFile, '.tar.gz')));
+      xExtract.targz (outputFile, outDir, null, function (err) {
+        callback (err ? 'extract failed: ' + err : null,
+                  path.join (outDir, path.basename (outputFile, '.tar.gz')));
       });
     }],
 
