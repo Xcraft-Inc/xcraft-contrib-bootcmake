@@ -37,8 +37,8 @@ var makeRun = function (callback) {
   async.eachSeries (list, function (args, callback) {
     var fullArgs = ['-j' + getJobs ()].concat (args);
 
-    xProcess.spawn ('make', fullArgs, function (done) {
-      callback (done ? null : 'make failed');
+    xProcess.spawn ('make', fullArgs, function (err) {
+      callback (err ? 'make failed: ' + err : null);
     }, function (line) {
       xLog.verb (line);
     }, function (line) {
@@ -64,8 +64,8 @@ var bootstrapRun = function (cmakeDir, callback) {
   ];
 
   process.chdir (cmakeDir);
-  xProcess.spawn ('sh', args, function (done) {
-    callback (done ? null : 'bootstrap failed');
+  xProcess.spawn ('sh', args, function (err) {
+    callback (err ? 'bootstrap failed: ' + err : null);
   }, function (line) {
     xLog.verb (line);
   }, function (line) {
