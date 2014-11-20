@@ -1,10 +1,8 @@
 {
   "install": {
-    "params": null,
     "desc": "build and install CMake"
   },
   "uninstall": {
-    "params": null,
     "desc": "uninstall CMake"
   }
 }
