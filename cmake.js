@@ -26,7 +26,7 @@ var getJobs = function () {
 };
 
 /* TODO: must be generic. */
-var makeRun = function (callback) {
+var makeRun = function (make, callback) {
   xLog.info ('begin building of cmake');
 
   var list = [
@@ -37,7 +37,7 @@ var makeRun = function (callback) {
   async.eachSeries (list, function (args, callback) {
     var fullArgs = ['-j' + getJobs ()].concat (args);
 
-    xProcess.spawn ('make', fullArgs, function (err) {
+    xProcess.spawn (make, fullArgs, function (err) {
       callback (err ? 'make failed: ' + err : null);
     }, function (line) {
       xLog.verb (line);
@@ -105,7 +105,9 @@ cmd.install = function () {
       bootstrapRun (results.taskExtract, callback);
     }],
 
-    taskMake: ['taskBootstrap', makeRun]
+    taskMake: ['taskBootstrap', function (callback) {
+      makeRun ('make', callback);
+    }]
   }, function (err) {
     if (err) {
       xLog.err (err);
