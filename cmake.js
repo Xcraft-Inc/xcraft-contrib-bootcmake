@@ -9,16 +9,17 @@ var xProcess     = require ('xcraft-core-process');
 var xPlatform    = require ('xcraft-core-platform');
 var xcraftConfig = require ('xcraft-core-etc').load ('xcraft');
 var xLog         = require ('xcraft-core-log') (moduleName);
+var xFs          = require ('xcraft-core-fs');
 var busClient    = require ('xcraft-core-busclient');
 
 var pkgConfig = require ('xcraft-core-etc').load ('xcraft-contrib-cmake');
 var cmd = {};
 
 
-var getJobs = function () {
+var getJobs = function (force) {
   var os = require ('os');
 
-  if (xPlatform.getOs () === 'win') {
+  if (!force && xPlatform.getOs () === 'win') {
     return 1;
   }
 
@@ -26,7 +27,7 @@ var getJobs = function () {
 };
 
 /* TODO: must be generic. */
-var makeRun = function (make, callback) {
+var makeRun = function (make, jobs, callback) {
   xLog.info ('begin building of cmake');
 
   var list = [
@@ -35,7 +36,7 @@ var makeRun = function (make, callback) {
   ];
 
   async.eachSeries (list, function (args, callback) {
-    var fullArgs = ['-j' + getJobs ()].concat (args);
+    var fullArgs = ['-j' + getJobs (jobs)].concat (args);
 
     xProcess.spawn (make, fullArgs, function (err) {
       callback (err ? 'make failed: ' + err : null);
@@ -73,6 +74,33 @@ var bootstrapRun = function (cmakeDir, callback) {
   });
 };
 
+/* TODO: must be generic. */
+var cmakeRun = function (srcDir, callback) {
+  /* FIXME, TODO: use a backend (a module) for building with cmake. */
+  /* cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr . && make all install */
+
+  var buildDir = path.join (srcDir, '../BUILD_CMAKE');
+  xFs.mkdir (buildDir);
+
+  var args = [
+    '-DCMAKE_INSTALL_PREFIX:PATH=' + path.resolve (pkgConfig.out),
+    srcDir
+  ];
+
+  if (xPlatform.getOs () === 'win') {
+    args.unshift ('-G', 'MinGW Makefiles');
+  }
+
+  process.chdir (buildDir);
+  xProcess.spawn ('cmake', args, function (err) {
+    callback (err ? 'cmake failed: ' + err : null);
+  }, function (line) {
+    xLog.verb (line);
+  }, function (line) {
+    xLog.warn (line);
+  });
+};
+
 /**
  * Install the cmake package.
  */
@@ -101,16 +129,63 @@ cmd.install = function () {
       });
     }],
 
-    taskBootstrap: ['taskExtract', function (callback, results) {
-      bootstrapRun (results.taskExtract, callback);
+    taskPrepare: ['taskExtract', function (callback) {
+      var cmake = xFs.isInPath ('cmake' + xPlatform.getExecExt ());
+      callback (null, cmake);
     }],
 
-    taskMake: ['taskBootstrap', function (callback) {
-      makeRun ('make', callback);
+    taskBootstrap: ['taskPrepare', function (callback, results) {
+      if (!results.taskPrepare) {
+        bootstrapRun (results.taskExtract, callback);
+      } else {
+        callback ();
+      }
+    }],
+
+    taskMSYS: ['taskPrepare', function (callback, results) {
+      if (!results.taskPrepare) {
+        callback (null, [false, null]);
+        return;
+      }
+
+      if (xPlatform.getOs () === 'win') {
+        /* Remove MSYS from the path. */
+        var sh = xFs.isInPath ('sh.exe');
+        if (sh) {
+          var paths = process.env.PATH;
+          var list = paths.split (path.delimiter);
+          list.splice (sh[0], 1);
+          process.env.PATH = list.join (path.delimiter);
+          xLog.verb ('drop MSYS from PATH: ' + process.env.PATH);
+          callback (null, [true, paths]);
+          return;
+        }
+      }
+      callback (null, [true, null]);
+    }],
+
+    taskCMake: ['taskMSYS', function (callback, results) {
+      if (results.taskMSYS[0]) {
+        cmakeRun (results.taskExtract, callback);
+      } else {
+        callback ();
+      }
+    }],
+
+    taskMake: ['taskBootstrap', 'taskCMake', function (callback, results) {
+      makeRun (results.taskMSYS[0] && xPlatform.getOs () === 'win' ? 'mingw32-make' : 'make',
+               results.taskMSYS[0],
+               callback);
     }]
-  }, function (err) {
+  }, function (err, results) {
     if (err) {
       xLog.err (err);
+    }
+
+    /* Restore MSYS */
+    if (results.taskMSYS[0]) {
+      xLog.verb ('restore PATH: ' + results.taskMSYS[1]);
+      process.env.PATH = results.taskMSYS[1];
     }
 
     busClient.events.send ('cmake.install.finished');
