@@ -145,29 +145,32 @@ cmd.install = function () {
     }],
 
     taskMSYS: ['taskPrepare', function (callback, results) {
+      var res = {
+        cmake: null,
+        path: null
+      };
+
       if (!results.taskPrepare) {
-        callback (null, [false, null]);
+        res.cmake = false;
+        callback (null, res);
         return;
       }
 
+      res.cmake = true;
+
       if (xPlatform.getOs () === 'win') {
-        /* Remove MSYS from the path. */
+        /* Strip MSYS from the PATH. */
         var sh = xPath.isIn ('sh.exe');
         if (sh) {
-          var paths = process.env.PATH;
-          var list = paths.split (path.delimiter);
-          list.splice (sh.index, 1);
-          process.env.PATH = list.join (path.delimiter);
-          xLog.verb ('drop MSYS from PATH: ' + process.env.PATH);
-          callback (null, [true, paths]);
-          return;
+          res.path = xPath.strip (sh.index);
         }
       }
-      callback (null, [true, null]);
+
+      callback (null, res);
     }],
 
     taskCMake: ['taskMSYS', function (callback, results) {
-      if (results.taskMSYS[0]) {
+      if (results.taskMSYS.cmake) {
         cmakeRun (results.taskExtract, callback);
       } else {
         callback ();
@@ -175,8 +178,8 @@ cmd.install = function () {
     }],
 
     taskMake: ['taskBootstrap', 'taskCMake', function (callback, results) {
-      makeRun (results.taskMSYS[0] && xPlatform.getOs () === 'win' ? 'mingw32-make' : 'make',
-               results.taskMSYS[0],
+      makeRun (results.taskMSYS.cmake && xPlatform.getOs () === 'win' ? 'mingw32-make' : 'make',
+               results.taskMSYS.cmake,
                callback);
     }]
   }, function (err, results) {
@@ -184,10 +187,9 @@ cmd.install = function () {
       xLog.err (err);
     }
 
-    /* Restore MSYS */
-    if (results.taskMSYS[0]) {
-      xLog.verb ('restore PATH: ' + results.taskMSYS[1]);
-      process.env.PATH = results.taskMSYS[1];
+    /* Restore MSYS path. */
+    if (results.taskMSYS.path) {
+      process.env.PATH = results.taskMSYS.path;
     }
 
     busClient.events.send ('cmake.install.finished');
