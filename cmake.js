@@ -105,6 +105,8 @@ var cmakeRun = function (srcDir, callback) {
  * Install the cmake package.
  */
 cmd.install = function () {
+  var xPath = require ('xcraft-core-path');
+
   var archive = path.basename (pkgConfig.src);
   var inputFile  = pkgConfig.src;
   var outputFile = path.join (xcraftConfig.tempRoot, 'src', archive);
@@ -130,7 +132,7 @@ cmd.install = function () {
     }],
 
     taskPrepare: ['taskExtract', function (callback) {
-      var cmake = xFs.isInPath ('cmake' + xPlatform.getExecExt ());
+      var cmake = xPath.isIn ('cmake' + xPlatform.getExecExt ());
       callback (null, cmake);
     }],
 
@@ -150,11 +152,11 @@ cmd.install = function () {
 
       if (xPlatform.getOs () === 'win') {
         /* Remove MSYS from the path. */
-        var sh = xFs.isInPath ('sh.exe');
+        var sh = xPath.isIn ('sh.exe');
         if (sh) {
           var paths = process.env.PATH;
           var list = paths.split (path.delimiter);
-          list.splice (sh[0], 1);
+          list.splice (sh.index, 1);
           process.env.PATH = list.join (path.delimiter);
           xLog.verb ('drop MSYS from PATH: ' + process.env.PATH);
           callback (null, [true, paths]);
