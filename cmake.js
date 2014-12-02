@@ -64,8 +64,10 @@ var bootstrapRun = function (cmakeDir, callback) {
     '--prefix=' + path.resolve (pkgConfig.out)
   ];
 
+  var currentDir = process.cwd ();
   process.chdir (cmakeDir);
   xProcess.spawn ('sh', args, function (err) {
+    process.chdir (currentDir);
     callback (err ? 'bootstrap failed: ' + err : null);
   }, function (line) {
     xLog.verb (line);
@@ -91,8 +93,10 @@ var cmakeRun = function (srcDir, callback) {
     args.unshift ('-G', 'MinGW Makefiles');
   }
 
+  var currentDir = process.cwd ();
   process.chdir (buildDir);
   xProcess.spawn ('cmake', args, function (err) {
+    process.chdir (currentDir);
     callback (err ? 'cmake failed: ' + err : null);
   }, function (line) {
     xLog.verb (line);
