@@ -27,7 +27,7 @@ var getJobs = function (force) {
 };
 
 /* TODO: must be generic. */
-var makeRun = function (make, jobs, callback) {
+var makeRun = function (makeDir, make, jobs, callback) {
   xLog.info ('begin building of cmake');
 
   var list = [
@@ -35,6 +35,8 @@ var makeRun = function (make, jobs, callback) {
     'install'
   ];
 
+  var currentDir = process.cwd ();
+  process.chdir (makeDir);
   async.eachSeries (list, function (args, callback) {
     var fullArgs = ['-j' + getJobs (jobs)].concat (args);
 
@@ -50,6 +52,7 @@ var makeRun = function (make, jobs, callback) {
       xLog.info ('cmake is built and installed');
     }
 
+    process.chdir (currentDir);
     callback (err ? 'make failed' : null);
   });
 };
@@ -182,7 +185,11 @@ cmd.install = function () {
     }],
 
     taskMake: ['taskBootstrap', 'taskCMake', function (callback, results) {
-      makeRun (results.taskMSYS.cmake && xPlatform.getOs () === 'win' ? 'mingw32-make' : 'make',
+      var buildDir = results.taskMSYS.cmake ?
+                     path.join (results.taskExtract, '../BUILD_CMAKE') :
+                     results.taskExtract;
+      makeRun (buildDir,
+               results.taskMSYS.cmake && xPlatform.getOs () === 'win' ? 'mingw32-make' : 'make',
                results.taskMSYS.cmake,
                callback);
     }]
