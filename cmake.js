@@ -114,9 +114,7 @@ var cmakeRun = function (srcDir, callback) {
     srcDir
   ];
 
-  if (xPlatform.getOs () === 'win') {
-    args.unshift ('-G', 'MinGW Makefiles');
-  }
+  args.unshift ('-G', exports.getGenerator ());
 
   var currentDir = process.cwd ();
   process.chdir (buildDir);
@@ -211,7 +209,7 @@ cmd.install = function () {
                      path.join (results.taskExtract, '../BUILD_CMAKE') :
                      results.taskExtract;
       makeRun (buildDir,
-               results.taskMSYS.cmake && xPlatform.getOs () === 'win' ? 'mingw32-make' : 'make',
+               results.taskMSYS.cmake ? exports.getMakeTool () : 'make',
                results.taskMSYS.cmake,
                callback);
     }]
