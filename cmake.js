@@ -16,6 +16,28 @@ var pkgConfig = require ('xcraft-core-etc').load ('xcraft-contrib-cmake');
 var cmd = {};
 
 
+exports.getGenerator = function () {
+  switch (xPlatform.getOs ()) {
+  case 'win': {
+    return 'MinGW Makefiles';
+  }
+  default: {
+    return 'Unix Makefiles';
+  }
+  }
+};
+
+exports.getMakeTool = function () {
+  switch (xPlatform.getOs ()) {
+  case 'win': {
+    return 'mingw32-make';
+  }
+  default: {
+    return 'make';
+  }
+  }
+};
+
 var getJobs = function (force) {
   var os = require ('os');
 
