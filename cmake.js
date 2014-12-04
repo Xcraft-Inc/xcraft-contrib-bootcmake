@@ -198,14 +198,7 @@ cmd.install = function () {
       }
 
       res.cmake = true;
-
-      if (xPlatform.getOs () === 'win') {
-        /* Strip MSYS from the PATH. */
-        var sh = xPath.isIn ('sh.exe');
-        if (sh) {
-          res.path = xPath.strip (sh.index);
-        }
-      }
+      res.path = exports.stripShForMinGW ();
 
       callback (null, res);
     }],
