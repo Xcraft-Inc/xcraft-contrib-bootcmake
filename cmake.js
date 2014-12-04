@@ -38,6 +38,20 @@ exports.getMakeTool = function () {
   }
 };
 
+exports.stripShForMinGW = function () {
+  if (xPlatform.getOs () !== 'win') {
+    return process.env.PATH;
+  }
+
+  var xPath = require ('xcraft-core-path');
+
+  /* Strip MSYS from the PATH. */
+  var sh = xPath.isIn ('sh.exe');
+  if (sh) {
+    return xPath.strip (sh.index);
+  }
+};
+
 var getJobs = function (force) {
   var os = require ('os');
 
