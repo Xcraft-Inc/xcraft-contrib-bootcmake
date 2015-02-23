@@ -76,7 +76,7 @@ var makeRun = function (makeDir, make, jobs, callback) {
   async.eachSeries (list, function (args, callback) {
     var fullArgs = ['-j' + getJobs (jobs)].concat (args);
 
-    xProcess.spawn (make, fullArgs, function (err) {
+    xProcess.spawn (make, fullArgs, {}, function (err) {
       callback (err ? 'make failed: ' + err : null);
     }, function (line) {
       xLog.verb (line);
@@ -105,7 +105,7 @@ var bootstrapRun = function (cmakeDir, callback) {
 
   var currentDir = process.cwd ();
   process.chdir (cmakeDir);
-  xProcess.spawn ('sh', args, function (err) {
+  xProcess.spawn ('sh', args, {}, function (err) {
     process.chdir (currentDir);
     callback (err ? 'bootstrap failed: ' + err : null);
   }, function (line) {
@@ -133,7 +133,7 @@ var cmakeRun = function (srcDir, callback) {
 
   var currentDir = process.cwd ();
   process.chdir (buildDir);
-  xProcess.spawn ('cmake', args, function (err) {
+  xProcess.spawn ('cmake', args, {}, function (err) {
     process.chdir (currentDir);
     callback (err ? 'cmake failed: ' + err : null);
   }, function (line) {
