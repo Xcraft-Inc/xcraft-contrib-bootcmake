@@ -144,9 +144,9 @@ var cmakeRun = function (srcDir, callback) {
 };
 
 /**
- * Install the cmake package.
+ * Build the cmake package.
  */
-cmd.install = function () {
+cmd.build = function () {
   var xPath = require ('xcraft-core-path');
 
   var archive = path.basename (pkgConfig.src);
@@ -231,7 +231,7 @@ cmd.install = function () {
       process.env.PATH = results.taskMSYS.path;
     }
 
-    busClient.events.send ('cmake.install.finished');
+    busClient.events.send ('cmake.build.finished');
   });
 };
 
