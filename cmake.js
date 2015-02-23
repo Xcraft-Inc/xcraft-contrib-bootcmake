@@ -236,14 +236,6 @@ cmd.build = function () {
 };
 
 /**
- * Uninstall the cmake package.
- */
-cmd.uninstall = function () {
-  xLog.warn ('the uninstall action is not implemented');
-  busClient.events.send ('cmake.uninstall.finished');
-};
-
-/**
  * Retrieve the list of available commands.
  *
  * @returns {Object} The list and definitions of commands.
