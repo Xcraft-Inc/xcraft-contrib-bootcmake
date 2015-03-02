@@ -39,11 +39,11 @@ exports.getMakeTool = function () {
 };
 
 exports.stripShForMinGW = function () {
-  if (xPlatform.getOs () !== 'win') {
-    return process.env.PATH;
-  }
-
   var xPath = require ('xcraft-core-path');
+
+  if (xPlatform.getOs () !== 'win') {
+    return xPath.getList ();
+  }
 
   /* Strip MSYS from the PATH. */
   var sh = xPath.isIn ('sh.exe');
@@ -228,7 +228,7 @@ cmd.build = function () {
 
     /* Restore MSYS path. */
     if (results.taskMSYS.path) {
-      process.env.PATH = results.taskMSYS.path;
+      xPath.setList (results.taskMSYS.path);
     }
 
     busClient.events.send ('cmake.build.finished');
