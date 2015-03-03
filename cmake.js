@@ -42,17 +42,15 @@ exports.stripShForMinGW = function () {
   var xPath = require ('xcraft-core-path');
 
   if (xPlatform.getOs () !== 'win') {
-    return xPath.getList ();
+    return null;
   }
 
   /* Strip MSYS from the PATH. */
   var sh = xPath.isIn ('sh.exe');
-  if (sh) {
-    return {
-      index:    sh.index,
-      location: xPath.strip (sh.index)
-    };
-  }
+  return sh ? {
+    index:    sh.index,
+    location: xPath.strip (sh.index)
+  } : null;
 };
 
 var getJobs = function (force) {
