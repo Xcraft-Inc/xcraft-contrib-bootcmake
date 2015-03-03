@@ -48,7 +48,10 @@ exports.stripShForMinGW = function () {
   /* Strip MSYS from the PATH. */
   var sh = xPath.isIn ('sh.exe');
   if (sh) {
-    return xPath.strip (sh.index);
+    return {
+      index:    sh.index,
+      location: xPath.strip (sh.index)
+    };
   }
 };
 
@@ -228,7 +231,7 @@ cmd.build = function () {
 
     /* Restore MSYS path. */
     if (results.taskMSYS.path) {
-      xPath.setList (results.taskMSYS.path);
+      xPath.insert (results.taskMSYS.path.index, results.taskMSYS.path.location);
     }
 
     busClient.events.send ('cmake.build.finished');
