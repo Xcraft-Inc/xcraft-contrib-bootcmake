@@ -154,8 +154,7 @@ cmd.build = function () {
   var inputFile  = pkgConfig.src;
   var outputFile = path.join (xcraftConfig.tempRoot, 'src', archive);
 
-  async.auto (
-  {
+  async.auto ({
     taskHttp: function (callback) {
       var xHttp = require ('xcraft-core-http');
 
