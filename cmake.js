@@ -5,7 +5,7 @@ var moduleName = 'cmake';
 var path  = require ('path');
 var async = require ('async');
 
-var xProcess     = require ('xcraft-core-process');
+var xProcess     = require ('xcraft-core-process') ('xlog', {mod: moduleName});
 var xPlatform    = require ('xcraft-core-platform');
 var xcraftConfig = require ('xcraft-core-etc').load ('xcraft');
 var xLog         = require ('xcraft-core-log') (moduleName);
@@ -79,10 +79,6 @@ var makeRun = function (makeDir, make, jobs, callback) {
 
     xProcess.spawn (make, fullArgs, {}, function (err) {
       callback (err ? 'make failed: ' + err : null);
-    }, function (line) {
-      xLog.verb (line);
-    }, function (line) {
-      xLog.warn (line);
     });
   }, function (err) {
     if (!err) {
@@ -109,10 +105,6 @@ var bootstrapRun = function (cmakeDir, callback) {
   xProcess.spawn ('sh', args, {}, function (err) {
     process.chdir (currentDir);
     callback (err ? 'bootstrap failed: ' + err : null);
-  }, function (line) {
-    xLog.verb (line);
-  }, function (line) {
-    xLog.warn (line);
   });
 };
 
@@ -137,10 +129,6 @@ var cmakeRun = function (srcDir, callback) {
   xProcess.spawn ('cmake', args, {}, function (err) {
     process.chdir (currentDir);
     callback (err ? 'cmake failed: ' + err : null);
-  }, function (line) {
-    xLog.verb (line);
-  }, function (line) {
-    xLog.warn (line);
   });
 };
 
