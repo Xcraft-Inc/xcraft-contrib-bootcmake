@@ -5,7 +5,7 @@ var moduleName = 'cmake';
 var path  = require ('path');
 var async = require ('async');
 
-var xProcess     = require ('xcraft-core-process') ('xlog', {mod: moduleName});
+var xProcess     = require ('xcraft-core-process') ({logger: 'xlog', mod: moduleName});
 var xPlatform    = require ('xcraft-core-platform');
 var xcraftConfig = require ('xcraft-core-etc').load ('xcraft');
 var xLog         = require ('xcraft-core-log') (moduleName);
