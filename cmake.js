@@ -11,6 +11,7 @@ var xcraftConfig = require ('xcraft-core-etc').load ('xcraft');
 var xLog         = require ('xcraft-core-log') (moduleName);
 var xFs          = require ('xcraft-core-fs');
 var busClient    = require ('xcraft-core-busclient').global;
+var busLog       = require ('xcraft-core-buslog');
 
 var pkgConfig = require ('xcraft-core-etc').load ('xcraft-contrib-cmake');
 var cmd = {};
@@ -220,6 +221,7 @@ cmd.build = function () {
       xPath.insert (results.taskMSYS.path.index, results.taskMSYS.path.location);
     }
 
+    busLog.info ('Build of CMake is finished.');
     busClient.events.send ('cmake.build.finished');
   });
 };
