@@ -150,6 +150,8 @@ cmd.build = function () {
 
       xHttp.get (inputFile, outputFile, function () {
         callback ();
+      }, function (progress, total) {
+        busLog.progress ('Downloading', progress, total);
       });
     },
 
