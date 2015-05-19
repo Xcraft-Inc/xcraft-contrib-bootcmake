@@ -5,13 +5,18 @@ var moduleName = 'cmake';
 var path  = require ('path');
 var async = require ('async');
 
-var xProcess     = require ('xcraft-core-process') ({logger: 'xlog', mod: moduleName, parser: 'cmake', events: true});
 var xPlatform    = require ('xcraft-core-platform');
 var xcraftConfig = require ('xcraft-core-etc').load ('xcraft');
 var xLog         = require ('xcraft-core-log') (moduleName);
 var xFs          = require ('xcraft-core-fs');
 var busClient    = require ('xcraft-core-busclient').global;
 var busLog       = require ('xcraft-core-buslog');
+var xProcess     = require ('xcraft-core-process') ({
+  logger: 'xlog',
+  parser: 'cmake',
+  mod:    moduleName,
+  events: true
+});
 
 var pkgConfig = require ('xcraft-core-etc').load ('xcraft-contrib-cmake');
 var cmd = {};
