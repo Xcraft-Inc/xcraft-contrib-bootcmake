@@ -162,6 +162,8 @@ cmd.build = function () {
       xExtract.targz (outputFile, outDir, null, function (err) {
         callback (err ? 'extract failed: ' + err : null,
                   path.join (outDir, path.basename (outputFile, '.tar.gz')));
+      }, function (progress, total) {
+        busLog.progress ('Extracting', progress, total);
       });
     }],
 
