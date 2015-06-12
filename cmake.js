@@ -289,12 +289,12 @@ exports.xcraftConfig = [{
   type: 'input',
   name: 'version',
   message: 'version',
-  default: '3.0.2'
+  default: '3.2.3'
 }, {
   type: 'input',
   name: 'src',
   message: 'source URI',
-  default: 'http://www.cmake.org/files/v3.0/cmake-3.0.2.tar.gz'
+  default: 'http://www.cmake.org/files/v3.2/cmake-3.2.3.tar.gz'
 }, {
   type: 'input',
   name: 'out',
