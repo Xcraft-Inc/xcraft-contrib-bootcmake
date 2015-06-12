@@ -139,6 +139,32 @@ var cmakeRun = function (srcDir, callback) {
   });
 };
 
+var patchRun = function (srcDir, callback) {
+  var xDevel = require ('xcraft-core-devel');
+  var async  = require ('async');
+
+  var os = xPlatform.getOs ();
+
+  var patchDir = path.join (__dirname, 'patch');
+  var list = xFs.ls (patchDir, new RegExp ('^([0-9]+|' + os + '-).*.patch$'));
+
+  if (!list.length) {
+    callback ();
+    return;
+  }
+
+  async.eachSeries (list, function (file, callback) {
+    xLog.info ('apply patch: ' + file);
+    var patchFile = path.join (patchDir, file);
+
+    xDevel.patch (srcDir, patchFile, 1, function (err) {
+      callback (err ? 'patch failed: ' + file + ' ' + err : null);
+    });
+  }, function (err) {
+    callback (err);
+  });
+};
+
 /**
  * Build the cmake package.
  */
@@ -172,7 +198,11 @@ cmd.build = function () {
       });
     }],
 
-    taskPrepare: ['taskExtract', function (callback) {
+    taskPatch: ['taskExtract', function (callback, results) {
+      patchRun (results.taskExtract, callback);
+    }],
+
+    taskPrepare: ['taskPatch', function (callback) {
       var cmake = xPath.isIn ('cmake' + xPlatform.getExecExt ());
       callback (null, cmake);
     }],
