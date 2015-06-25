@@ -260,7 +260,6 @@ cmd.build = function () {
       xPath.insert (results.taskMSYS.path.index, results.taskMSYS.path.location);
     }
 
-    busLog.info ('Build of CMake is finished.');
     busClient.events.send ('cmake.build.finished');
   });
 };
