@@ -10,7 +10,6 @@ var xcraftConfig = require ('xcraft-core-etc').load ('xcraft');
 var xLog         = require ('xcraft-core-log') (moduleName);
 var xFs          = require ('xcraft-core-fs');
 var busClient    = require ('xcraft-core-busclient').global;
-var busLog       = require ('xcraft-core-buslog') (xLog);
 var xProcess     = require ('xcraft-core-process') ({
   logger: 'xlog',
   parser: 'cmake',
@@ -182,7 +181,7 @@ cmd.build = function () {
       xHttp.get (inputFile, outputFile, function () {
         callback ();
       }, function (progress, total) {
-        busLog.progress ('Downloading', progress, total);
+        xLog.progress ('Downloading', progress, total);
       });
     },
 
@@ -194,7 +193,7 @@ cmd.build = function () {
         callback (err ? 'extract failed: ' + err : null,
                   path.join (outDir, path.basename (outputFile, '.tar.gz')));
       }, function (progress, total) {
-        busLog.progress ('Extracting', progress, total);
+        xLog.progress ('Extracting', progress, total);
       });
     }],
 
