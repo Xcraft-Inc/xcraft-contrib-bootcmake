@@ -9,7 +9,7 @@ var xPlatform    = require ('xcraft-core-platform');
 var xcraftConfig = require ('xcraft-core-etc').load ('xcraft');
 var xLog         = require ('xcraft-core-log') (moduleName);
 var xFs          = require ('xcraft-core-fs');
-var busClient    = require ('xcraft-core-busclient').global;
+var busClient    = require ('xcraft-core-busclient').getGlobal ();
 var xProcess     = require ('xcraft-core-process') ({
   logger: 'xlog',
   parser: 'cmake',
