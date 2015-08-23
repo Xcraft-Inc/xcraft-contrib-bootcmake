@@ -17,11 +17,11 @@
   "dependencies": {
     "async": "^1.4.0",
     "xcraft-core-busclient": "0.1.0",
+    "xcraft-core-env": "0.1.0",
     "xcraft-core-extract": "0.1.0",
     "xcraft-core-fs": "0.1.0",
     "xcraft-core-http": "0.1.0",
     "xcraft-core-log": "0.1.0",
-    "xcraft-core-path": "0.1.0",
     "xcraft-core-platform": "0.1.0"
   },
   "author": "Mathieu Schroeter",

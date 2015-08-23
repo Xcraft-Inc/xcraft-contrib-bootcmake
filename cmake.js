@@ -10,6 +10,7 @@ var xcraftConfig = require ('xcraft-core-etc').load ('xcraft');
 var xLog         = require ('xcraft-core-log') (moduleName);
 var xFs          = require ('xcraft-core-fs');
 var busClient    = require ('xcraft-core-busclient').getGlobal ();
+var xEnv         = require ('xcraft-core-env');
 var xProcess     = require ('xcraft-core-process') ({
   logger: 'xlog',
   parser: 'cmake',
@@ -44,17 +45,15 @@ exports.getMakeTool = function () {
 };
 
 exports.stripShForMinGW = function () {
-  var xPath = require ('xcraft-core-path');
-
   if (xPlatform.getOs () !== 'win') {
     return null;
   }
 
   /* Strip MSYS from the PATH. */
-  var sh = xPath.isIn ('sh.exe');
+  var sh = xEnv.var.path.isIn ('sh.exe');
   return sh ? {
     index:    sh.index,
-    location: xPath.strip (sh.index)
+    location: xEnv.var.path.strip (sh.index)
   } : null;
 };
 
@@ -168,8 +167,6 @@ var patchRun = function (srcDir, callback) {
  * Build the cmake package.
  */
 cmd.build = function () {
-  var xPath = require ('xcraft-core-path');
-
   var archive = path.basename (pkgConfig.src);
   var inputFile  = pkgConfig.src;
   var outputFile = path.join (xcraftConfig.tempRoot, 'src', archive);
@@ -202,7 +199,7 @@ cmd.build = function () {
     }],
 
     taskPrepare: ['taskPatch', function (callback) {
-      var cmake = xPath.isIn ('cmake' + xPlatform.getExecExt ());
+      var cmake = xEnv.var.path.isIn ('cmake' + xPlatform.getExecExt ());
       callback (null, cmake);
     }],
 
@@ -256,7 +253,7 @@ cmd.build = function () {
 
     /* Restore MSYS path. */
     if (results.taskMSYS.path) {
-      xPath.insert (results.taskMSYS.path.index, results.taskMSYS.path.location);
+      xEnv.var.path.insert (results.taskMSYS.path.index, results.taskMSYS.path.location);
     }
 
     busClient.events.send ('cmake.build.finished');
