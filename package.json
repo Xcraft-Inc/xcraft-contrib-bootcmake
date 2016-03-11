@@ -1,5 +1,5 @@
 {
-  "name": "xcraft-contrib-cmake",
+  "name": "xcraft-contrib-bootcmake",
   "version": "0.1.0",
   "description": "Xcraft CMake support",
   "main": "cmake.js",
@@ -12,7 +12,7 @@
   ],
   "repository": {
     "type": "file",
-    "url": "lib/xcraft-contrib-cmake"
+    "url": "lib/xcraft-contrib-bootcmake"
   },
   "dependencies": {
     "async": "^1.4.0",

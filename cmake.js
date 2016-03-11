@@ -18,7 +18,7 @@ var xProcess     = require ('xcraft-core-process') ({
   events: true
 });
 
-var pkgConfig = require ('xcraft-core-etc').load ('xcraft-contrib-cmake');
+var pkgConfig = require ('xcraft-core-etc').load ('xcraft-contrib-bootcmake');
 var cmd = {};
 
 
