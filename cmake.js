@@ -6,7 +6,7 @@ var path  = require ('path');
 var async = require ('async');
 
 var xPlatform    = require ('xcraft-core-platform');
-var xcraftConfig = require ('xcraft-core-etc').load ('xcraft');
+var xcraftConfig = require ('xcraft-core-etc') ().load ('xcraft');
 var xLog         = require ('xcraft-core-log') (moduleName);
 var xFs          = require ('xcraft-core-fs');
 var busClient    = require ('xcraft-core-busclient').getGlobal ();
@@ -18,7 +18,7 @@ var xProcess     = require ('xcraft-core-process') ({
   events: true
 });
 
-var pkgConfig = require ('xcraft-core-etc').load ('xcraft-contrib-bootcmake');
+var pkgConfig = require ('xcraft-core-etc') ().load ('xcraft-contrib-bootcmake');
 var cmd = {};
 
 
