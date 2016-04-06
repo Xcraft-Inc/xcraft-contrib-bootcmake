@@ -1,24 +1,13 @@
 'use strict';
 
-var moduleName = 'cmake';
-
 var path  = require ('path');
 var async = require ('async');
 
 var xPlatform    = require ('xcraft-core-platform');
-var xcraftConfig = require ('xcraft-core-etc') ().load ('xcraft');
-var xLog         = require ('xcraft-core-log') (moduleName);
 var xFs          = require ('xcraft-core-fs');
-var busClient    = require ('xcraft-core-busclient').getGlobal ();
 var xEnv         = require ('xcraft-core-env');
-var xProcess     = require ('xcraft-core-process') ({
-  logger: 'xlog',
-  parser: 'cmake',
-  mod:    moduleName,
-  events: true
-});
 
-var pkgConfig = require ('xcraft-core-etc') ().load ('xcraft-contrib-bootcmake');
+
 var cmd = {};
 
 
@@ -68,13 +57,19 @@ var getJobs = function (force) {
 };
 
 /* TODO: must be generic. */
-var makeRun = function (makeDir, make, jobs, callback) {
-  xLog.info ('begin building of cmake');
+var makeRun = function (makeDir, make, jobs, response, callback) {
+  response.log.info ('begin building of cmake');
 
   var list = [
     'all',
     'install'
   ];
+
+  const xProcess = require ('xcraft-core-process') ({
+    logger: 'xlog',
+    parser: 'cmake',
+    response: response
+  });
 
   var currentDir = process.cwd ();
   process.chdir (makeDir);
@@ -86,7 +81,7 @@ var makeRun = function (makeDir, make, jobs, callback) {
     });
   }, function (err) {
     if (!err) {
-      xLog.info ('cmake is built and installed');
+      response.log.info ('cmake is built and installed');
     }
 
     process.chdir (currentDir);
@@ -95,7 +90,9 @@ var makeRun = function (makeDir, make, jobs, callback) {
 };
 
 /* TODO: must be generic. */
-var bootstrapRun = function (cmakeDir, callback) {
+var bootstrapRun = function (cmakeDir, response, callback) {
+  const pkgConfig = require ('xcraft-core-etc') (null, response).load ('xcraft-contrib-bootcmake');
+
   /* FIXME, TODO: use a backend (a module) for building cmake. */
   /* bootstrap --prefix=/mingw && make && make install */
   var args = [
@@ -103,6 +100,12 @@ var bootstrapRun = function (cmakeDir, callback) {
     '--parallel=' + getJobs (),
     '--prefix=' + path.resolve (pkgConfig.out)
   ];
+
+  const xProcess = require ('xcraft-core-process') ({
+    logger: 'xlog',
+    parser: 'cmake',
+    response: response
+  });
 
   var currentDir = process.cwd ();
   process.chdir (cmakeDir);
@@ -113,7 +116,9 @@ var bootstrapRun = function (cmakeDir, callback) {
 };
 
 /* TODO: must be generic. */
-var cmakeRun = function (srcDir, callback) {
+var cmakeRun = function (srcDir, response, callback) {
+  const pkgConfig = require ('xcraft-core-etc') (null, response).load ('xcraft-contrib-bootcmake');
+
   /* FIXME, TODO: use a backend (a module) for building with cmake. */
   /* cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr . && make all install */
 
@@ -129,6 +134,12 @@ var cmakeRun = function (srcDir, callback) {
 
   args.unshift ('-G', exports.getGenerator ());
 
+  const xProcess = require ('xcraft-core-process') ({
+    logger: 'xlog',
+    parser: 'cmake',
+    response: response
+  });
+
   var currentDir = process.cwd ();
   process.chdir (buildDir);
   xProcess.spawn ('cmake', args, {}, function (err) {
@@ -137,7 +148,7 @@ var cmakeRun = function (srcDir, callback) {
   });
 };
 
-var patchRun = function (srcDir, callback) {
+var patchRun = function (srcDir, response, callback) {
   var xDevel = require ('xcraft-core-devel');
   var async  = require ('async');
 
@@ -152,10 +163,10 @@ var patchRun = function (srcDir, callback) {
   }
 
   async.eachSeries (list, function (file, callback) {
-    xLog.info ('apply patch: ' + file);
+    response.log.info ('apply patch: ' + file);
     var patchFile = path.join (patchDir, file);
 
-    xDevel.patch (srcDir, patchFile, 1, function (err) {
+    xDevel.patch (srcDir, patchFile, 1, response, function (err) {
       callback (err ? 'patch failed: ' + file + ' ' + err : null);
     });
   }, function (err) {
@@ -166,7 +177,10 @@ var patchRun = function (srcDir, callback) {
 /**
  * Build the cmake package.
  */
-cmd.build = function () {
+cmd.build = function (msg, response) {
+  const xcraftConfig = require ('xcraft-core-etc') (null, response).load ('xcraft');
+  const pkgConfig    = require ('xcraft-core-etc') (null, response).load ('xcraft-contrib-bootcmake');
+
   var archive = path.basename (pkgConfig.src);
   var inputFile  = pkgConfig.src;
   var outputFile = path.join (xcraftConfig.tempRoot, 'src', archive);
@@ -178,7 +192,7 @@ cmd.build = function () {
       xHttp.get (inputFile, outputFile, function () {
         callback ();
       }, function (progress, total) {
-        xLog.progress ('Downloading', progress, total);
+        response.log.progress ('Downloading', progress, total);
       });
     },
 
@@ -186,16 +200,16 @@ cmd.build = function () {
       var xExtract = require ('xcraft-core-extract');
       var outDir = path.dirname (outputFile);
 
-      xExtract.targz (outputFile, outDir, null, function (err) {
+      xExtract.targz (outputFile, outDir, null, response, function (err) {
         callback (err ? 'extract failed: ' + err : null,
                   path.join (outDir, path.basename (outputFile, '.tar.gz')));
       }, function (progress, total) {
-        xLog.progress ('Extracting', progress, total);
+        response.log.progress ('Extracting', progress, total);
       });
     }],
 
     taskPatch: ['taskExtract', function (callback, results) {
-      patchRun (results.taskExtract, callback);
+      patchRun (results.taskExtract, response, callback);
     }],
 
     taskPrepare: ['taskPatch', function (callback) {
@@ -205,7 +219,7 @@ cmd.build = function () {
 
     taskBootstrap: ['taskPrepare', function (callback, results) {
       if (!results.taskPrepare) {
-        bootstrapRun (results.taskExtract, callback);
+        bootstrapRun (results.taskExtract, response, callback);
       } else {
         callback ();
       }
@@ -231,7 +245,7 @@ cmd.build = function () {
 
     taskCMake: ['taskMSYS', function (callback, results) {
       if (results.taskMSYS.cmake) {
-        cmakeRun (results.taskExtract, callback);
+        cmakeRun (results.taskExtract, response, callback);
       } else {
         callback ();
       }
@@ -244,11 +258,12 @@ cmd.build = function () {
       makeRun (buildDir,
                results.taskMSYS.cmake ? exports.getMakeTool () : 'make',
                results.taskMSYS.cmake,
+               response,
                callback);
     }]
   }, function (err, results) {
     if (err) {
-      xLog.err (err);
+      response.log.err (err);
     }
 
     /* Restore MSYS path. */
@@ -256,7 +271,7 @@ cmd.build = function () {
       xEnv.var.path.insert (results.taskMSYS.path.index, results.taskMSYS.path.location);
     }
 
-    busClient.events.send ('cmake.build.finished');
+    response.events.send ('cmake.build.finished');
   });
 };
 
@@ -266,8 +281,9 @@ cmd.build = function () {
  * @returns {Object} The list and definitions of commands.
  */
 exports.xcraftCommands = function () {
+  const xUtils = require ('xcraft-core-utils');
   return {
     handlers: cmd,
-    rc: path.join (__dirname, './rc.json')
+    rc: xUtils.json.fromFile (path.join (__dirname, './rc.json'))
   };
 };
