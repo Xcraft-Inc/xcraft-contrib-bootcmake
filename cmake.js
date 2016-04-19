@@ -68,7 +68,7 @@ var makeRun = function (makeDir, make, jobs, response, callback) {
   const xProcess = require ('xcraft-core-process') ({
     logger: 'xlog',
     parser: 'cmake',
-    response: response
+    resp:   response
   });
 
   var currentDir = process.cwd ();
@@ -104,7 +104,7 @@ var bootstrapRun = function (cmakeDir, response, callback) {
   const xProcess = require ('xcraft-core-process') ({
     logger: 'xlog',
     parser: 'cmake',
-    response: response
+    resp:   response
   });
 
   var currentDir = process.cwd ();
@@ -137,7 +137,7 @@ var cmakeRun = function (srcDir, response, callback) {
   const xProcess = require ('xcraft-core-process') ({
     logger: 'xlog',
     parser: 'cmake',
-    response: response
+    resp:   response
   });
 
   var currentDir = process.cwd ();
