@@ -267,7 +267,7 @@ cmd.build = function (msg, response) {
     }
 
     /* Restore MSYS path. */
-    if (results.taskMSYS.path) {
+    if (results.taskMSYS && results.taskMSYS.path) {
       xEnv.var.path.insert (results.taskMSYS.path.index, results.taskMSYS.path.location);
     }
 
