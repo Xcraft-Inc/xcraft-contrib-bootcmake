@@ -38,12 +38,22 @@ exports.stripShForMinGW = function () {
     return null;
   }
 
+  const list = [];
+
   /* Strip MSYS from the PATH. */
-  var sh = xEnv.var.path.isIn ('sh.exe');
-  return sh ? {
-    index:    sh.index,
-    location: xEnv.var.path.strip (sh.index)
-  } : null;
+  while (true) {
+    const sh = xEnv.var.path.isIn ('sh.exe');
+    if (!sh) {
+      break;
+    }
+
+    list.push ({
+      index:    sh.index,
+      location: xEnv.var.path.strip (sh.index)
+    });
+  }
+
+  return list;
 };
 
 var getJobs = function (force) {
@@ -268,7 +278,9 @@ cmd.build = function (msg, response) {
 
     /* Restore MSYS path. */
     if (results.taskMSYS && results.taskMSYS.path) {
-      xEnv.var.path.insert (results.taskMSYS.path.index, results.taskMSYS.path.location);
+      for (const p of results.taskMSYS.path) {
+        xEnv.var.path.insert (p.index, p.location);
+      }
     }
 
     response.events.send ('cmake.build.finished');
