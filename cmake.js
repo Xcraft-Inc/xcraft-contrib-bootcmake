@@ -34,11 +34,12 @@ exports.getMakeTool = function () {
 };
 
 exports.stripShForMinGW = function () {
+  const list = [];
+
   if (xPlatform.getOs () !== 'win') {
-    return null;
+    return list;
   }
 
-  const list = [];
 
   /* Strip MSYS from the PATH. */
   while (true) {
