@@ -16,13 +16,13 @@
   },
   "dependencies": {
     "async": "^1.4.0",
-    "xcraft-core-busclient": "0.1.0",
-    "xcraft-core-env": "0.1.0",
-    "xcraft-core-extract": "0.1.0",
-    "xcraft-core-fs": "0.1.0",
-    "xcraft-core-http": "0.1.0",
-    "xcraft-core-log": "0.1.0",
-    "xcraft-core-platform": "0.1.0"
+    "xcraft-core-busclient": "^1.0.0",
+    "xcraft-core-env": "^1.0.0",
+    "xcraft-core-extract": "^1.0.0",
+    "xcraft-core-fs": "^1.0.0",
+    "xcraft-core-http": "^1.0.0",
+    "xcraft-core-log": "^1.0.0",
+    "xcraft-core-platform": "^1.0.0"
   },
   "author": "Mathieu Schroeter",
   "license": "MIT",
