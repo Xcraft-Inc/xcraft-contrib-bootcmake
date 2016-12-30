@@ -17,7 +17,7 @@
   "dependencies": {
     "async": "^1.4.0",
     "xcraft-core-busclient": "^1.0.0",
-    "xcraft-core-env": "^1.0.0",
+    "xcraft-core-env": "^2.0.0",
     "xcraft-core-extract": "^1.0.0",
     "xcraft-core-fs": "^1.0.0",
     "xcraft-core-http": "^1.0.0",
