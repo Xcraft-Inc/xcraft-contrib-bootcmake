@@ -14,6 +14,11 @@
     "type": "file",
     "url": "lib/xcraft-contrib-bootcmake"
   },
+  "config": {
+    "xcraft": {
+      "commands": true
+    }
+  },
   "dependencies": {
     "async": "^1.4.0",
     "xcraft-core-busclient": "^1.0.0",

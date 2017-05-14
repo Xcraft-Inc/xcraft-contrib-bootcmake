@@ -345,9 +345,12 @@ cmd.build = function (msg, response) {
  * @returns {Object} The list and definitions of commands.
  */
 exports.xcraftCommands = function () {
-  const xUtils = require ('xcraft-core-utils');
   return {
     handlers: cmd,
-    rc: xUtils.json.fromFile (path.join (__dirname, './rc.json')),
+    rc: {
+      build: {
+        desc: 'build and install CMake',
+      },
+    },
   };
 };
