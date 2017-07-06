@@ -334,7 +334,7 @@ cmd.build = function (msg, response) {
         }
       }
 
-      response.events.send ('cmake.build.finished');
+      response.events.send (`cmake.build.${msg.id}.finished`);
     }
   );
 };
