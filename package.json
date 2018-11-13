@@ -6,10 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "xcraft",
-    "cmake"
-  ],
+  "keywords": ["xcraft", "cmake"],
   "repository": {
     "type": "file",
     "url": "lib/xcraft-contrib-bootcmake"
@@ -32,6 +29,6 @@
   "author": "Mathieu Schroeter",
   "license": "MIT",
   "devDependencies": {
-    "xcraft-dev-rules": "^0.2.0"
+    "xcraft-dev-rules": "^0.3.0"
   }
 }
