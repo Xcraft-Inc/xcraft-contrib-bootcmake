@@ -139,6 +139,7 @@ var cmakeRun = function(srcDir, response, callback) {
   xFs.mkdir(buildDir);
 
   var args = [
+    "-DCMAKE_CXX_FLAGS_RELEASE='-O3 -mtune=native'",
     '-DCMAKE_COLOR_MAKEFILE=OFF',
     '-DCMAKE_BUILD_TYPE=Release',
     '-DCMAKE_INSTALL_PREFIX:PATH=' + path.resolve(pkgConfig.out),
