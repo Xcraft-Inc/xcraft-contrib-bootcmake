@@ -108,8 +108,10 @@ var bootstrapRun = function(cmakeDir, response, callback) {
   /* bootstrap --prefix=/mingw && make && make install */
   var args = [
     'bootstrap',
-    '--parallel=' + getJobs(),
     '--prefix=' + path.resolve(pkgConfig.out),
+    '--parallel=' + getJobs(),
+    '--',
+    '-DCMAKE_BUILD_TYPE=Release',
   ];
 
   const xProcess = require('xcraft-core-process')({
