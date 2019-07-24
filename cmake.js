@@ -262,7 +262,8 @@ cmd.build = function(msg, response) {
       taskPrepare: [
         'taskPatch',
         function(callback) {
-          var cmake = xEnv.var.path.isIn('cmake' + xPlatform.getExecExt());
+          // FIXME: disable build via CMake, we should remove this code
+          var cmake = false; // xEnv.var.path.isIn('cmake' + xPlatform.getExecExt());
           callback(null, cmake);
         },
       ],
