@@ -1,6 +1,7 @@
 'use strict';
 
 var path = require('path');
+const fs = require('fs');
 var async = require('async');
 
 var xPlatform = require('xcraft-core-platform');
@@ -107,7 +108,6 @@ var bootstrapRun = function(cmakeDir, response, callback) {
   /* FIXME, TODO: use a backend (a module) for building cmake. */
   /* bootstrap --prefix=/mingw && make && make install */
   var args = [
-    'bootstrap',
     `--prefix=${path.resolve(pkgConfig.out)}`,
     `--parallel=${getJobs()}`,
     '--',
@@ -123,7 +123,8 @@ var bootstrapRun = function(cmakeDir, response, callback) {
 
   var currentDir = process.cwd();
   process.chdir(cmakeDir);
-  xProcess.spawn('sh', args, {}, function(err) {
+  fs.chmodSync('./bootstrap', 0o755);
+  xProcess.spawn('./bootstrap', args, {}, function(err) {
     process.chdir(currentDir);
     callback(err ? 'bootstrap failed: ' + err : null);
   });
