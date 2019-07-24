@@ -111,6 +111,7 @@ var bootstrapRun = function(cmakeDir, response, callback) {
     `--prefix=${path.resolve(pkgConfig.out)}`,
     `--parallel=${getJobs()}`,
     '--',
+    "-DCMAKE_CXX_FLAGS_RELEASE='-O3 -mtune=native'",
     '-DCMAKE_BUILD_TYPE=Release',
   ];
 
