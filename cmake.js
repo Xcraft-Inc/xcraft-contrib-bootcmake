@@ -108,8 +108,8 @@ var bootstrapRun = function(cmakeDir, response, callback) {
   /* bootstrap --prefix=/mingw && make && make install */
   var args = [
     'bootstrap',
-    '--prefix=' + path.resolve(pkgConfig.out),
-    '--parallel=' + getJobs(),
+    `--prefix=${path.resolve(pkgConfig.out)}`,
+    `--parallel=${getJobs()}`,
     '--',
     '-DCMAKE_BUILD_TYPE=Release',
   ];
