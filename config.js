@@ -14,13 +14,13 @@ module.exports = [
     type: 'input',
     name: 'version',
     message: 'version',
-    default: '3.12.0',
+    default: '3.15.2',
   },
   {
     type: 'input',
     name: 'src',
     message: 'source URI',
-    default: 'http://www.cmake.org/files/v3.12/cmake-3.12.0.tar.gz',
+    default: 'http://www.cmake.org/files/v3.15/cmake-3.15.2.tar.gz',
   },
   {
     type: 'input',
