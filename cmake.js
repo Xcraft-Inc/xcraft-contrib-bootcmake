@@ -66,15 +66,15 @@ var getJobs = function(force) {
 };
 
 /* TODO: must be generic. */
-var makeRun = function(makeDir, make, jobs, response, callback) {
-  response.log.info('begin building of cmake');
+var makeRun = function(makeDir, make, jobs, resp, callback) {
+  resp.log.info('begin building of cmake');
 
   var list = ['all', 'install'];
 
   const xProcess = require('xcraft-core-process')({
     logger: 'xlog',
     parser: 'cmake',
-    resp: response,
+    resp,
   });
 
   var currentDir = process.cwd();
@@ -90,7 +90,7 @@ var makeRun = function(makeDir, make, jobs, response, callback) {
     },
     function(err) {
       if (!err) {
-        response.log.info('cmake is built and installed');
+        resp.log.info('cmake is built and installed');
       }
 
       process.chdir(currentDir);
@@ -100,8 +100,8 @@ var makeRun = function(makeDir, make, jobs, response, callback) {
 };
 
 /* TODO: must be generic. */
-var bootstrapRun = function(cmakeDir, response, callback) {
-  const pkgConfig = require('xcraft-core-etc')(null, response).load(
+var bootstrapRun = function(cmakeDir, resp, callback) {
+  const pkgConfig = require('xcraft-core-etc')(null, resp).load(
     'xcraft-contrib-bootcmake'
   );
 
@@ -118,7 +118,7 @@ var bootstrapRun = function(cmakeDir, response, callback) {
   const xProcess = require('xcraft-core-process')({
     logger: 'xlog',
     parser: 'cmake',
-    resp: response,
+    resp,
   });
 
   var currentDir = process.cwd();
@@ -131,8 +131,8 @@ var bootstrapRun = function(cmakeDir, response, callback) {
 };
 
 /* TODO: must be generic. */
-var cmakeRun = function(srcDir, response, callback) {
-  const pkgConfig = require('xcraft-core-etc')(null, response).load(
+var cmakeRun = function(srcDir, resp, callback) {
+  const pkgConfig = require('xcraft-core-etc')(null, resp).load(
     'xcraft-contrib-bootcmake'
   );
 
@@ -155,7 +155,7 @@ var cmakeRun = function(srcDir, response, callback) {
   const xProcess = require('xcraft-core-process')({
     logger: 'xlog',
     parser: 'cmake',
-    resp: response,
+    resp,
   });
 
   var currentDir = process.cwd();
@@ -166,7 +166,7 @@ var cmakeRun = function(srcDir, response, callback) {
   });
 };
 
-var patchRun = function(srcDir, response, callback) {
+var patchRun = function(srcDir, resp, callback) {
   var xDevel = require('xcraft-core-devel');
   var async = require('async');
 
@@ -183,10 +183,10 @@ var patchRun = function(srcDir, response, callback) {
   async.eachSeries(
     list,
     function(file, callback) {
-      response.log.info('apply patch: ' + file);
+      resp.log.info('apply patch: ' + file);
       var patchFile = path.join(patchDir, file);
 
-      xDevel.patch(srcDir, patchFile, 1, response, function(err) {
+      xDevel.patch(srcDir, patchFile, 1, resp, function(err) {
         callback(err ? 'patch failed: ' + file + ' ' + err : null);
       });
     },
@@ -199,11 +199,9 @@ var patchRun = function(srcDir, response, callback) {
 /**
  * Build the cmake package.
  */
-cmd.build = function(msg, response) {
-  const xcraftConfig = require('xcraft-core-etc')(null, response).load(
-    'xcraft'
-  );
-  const pkgConfig = require('xcraft-core-etc')(null, response).load(
+cmd.build = function(msg, resp) {
+  const xcraftConfig = require('xcraft-core-etc')(null, resp).load('xcraft');
+  const pkgConfig = require('xcraft-core-etc')(null, resp).load(
     'xcraft-contrib-bootcmake'
   );
 
@@ -223,7 +221,7 @@ cmd.build = function(msg, response) {
             callback();
           },
           function(progress, total) {
-            response.log.progress('Downloading', progress, total);
+            resp.log.progress('Downloading', progress, total);
           }
         );
       },
@@ -238,7 +236,7 @@ cmd.build = function(msg, response) {
             outputFile,
             outDir,
             null,
-            response,
+            resp,
             function(err) {
               callback(
                 err ? 'extract failed: ' + err : null,
@@ -246,7 +244,7 @@ cmd.build = function(msg, response) {
               );
             },
             function(progress, total) {
-              response.log.progress('Extracting', progress, total);
+              resp.log.progress('Extracting', progress, total);
             }
           );
         },
@@ -255,7 +253,7 @@ cmd.build = function(msg, response) {
       taskPatch: [
         'taskExtract',
         function(callback, results) {
-          patchRun(results.taskExtract, response, callback);
+          patchRun(results.taskExtract, resp, callback);
         },
       ],
 
@@ -272,7 +270,7 @@ cmd.build = function(msg, response) {
         'taskPrepare',
         function(callback, results) {
           if (!results.taskPrepare) {
-            bootstrapRun(results.taskExtract, response, callback);
+            bootstrapRun(results.taskExtract, resp, callback);
           } else {
             callback();
           }
@@ -304,7 +302,7 @@ cmd.build = function(msg, response) {
         'taskMSYS',
         function(callback, results) {
           if (results.taskMSYS.cmake) {
-            cmakeRun(results.taskExtract, response, callback);
+            cmakeRun(results.taskExtract, resp, callback);
           } else {
             callback();
           }
@@ -322,7 +320,7 @@ cmd.build = function(msg, response) {
             buildDir,
             results.taskMSYS.cmake ? exports.getMakeTool() : 'make',
             results.taskMSYS.cmake,
-            response,
+            resp,
             callback
           );
         },
@@ -330,7 +328,7 @@ cmd.build = function(msg, response) {
     },
     function(err, results) {
       if (err) {
-        response.log.err(err);
+        resp.log.err(err);
       }
 
       /* Restore MSYS path. */
@@ -340,7 +338,7 @@ cmd.build = function(msg, response) {
         }
       }
 
-      response.events.send(`cmake.build.${msg.id}.finished`);
+      resp.events.send(`cmake.build.${msg.id}.finished`);
     }
   );
 };
