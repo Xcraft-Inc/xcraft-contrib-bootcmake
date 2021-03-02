@@ -124,6 +124,13 @@ var bootstrapRun = function (cmakeDir, resp, callback) {
   var currentDir = process.cwd();
   process.chdir(cmakeDir);
   fs.chmodSync('./bootstrap', 0o755);
+
+  let exec = './bootstrap';
+  if (xPlatform.getOs() === 'win') {
+    args.unshift(exec);
+    exec = 'sh.exe';
+  }
+
   xProcess.spawn('./bootstrap', args, {}, function (err) {
     process.chdir(currentDir);
     callback(err ? 'bootstrap failed: ' + err : null);
