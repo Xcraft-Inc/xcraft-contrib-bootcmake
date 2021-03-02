@@ -131,7 +131,7 @@ var bootstrapRun = function (cmakeDir, resp, callback) {
     exec = 'sh.exe';
   }
 
-  xProcess.spawn('./bootstrap', args, {}, function (err) {
+  xProcess.spawn(exec, args, {}, function (err) {
     process.chdir(currentDir);
     callback(err ? 'bootstrap failed: ' + err : null);
   });
