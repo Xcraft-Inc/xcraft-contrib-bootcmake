@@ -55,18 +55,13 @@ exports.stripShForMinGW = function () {
   return list;
 };
 
-var getJobs = function (force) {
+var getJobs = function () {
   var os = require('os');
-
-  if (!force && xPlatform.getOs() === 'win') {
-    return 1;
-  }
-
   return os.cpus().length;
 };
 
 /* TODO: must be generic. */
-var makeRun = function (makeDir, make, jobs, resp, callback) {
+var makeRun = function (makeDir, make, resp, callback) {
   resp.log.info('begin building of cmake');
 
   var list = ['all', 'install'];
@@ -82,7 +77,7 @@ var makeRun = function (makeDir, make, jobs, resp, callback) {
   async.eachSeries(
     list,
     function (args, callback) {
-      var fullArgs = ['-j' + getJobs(jobs)].concat(args);
+      var fullArgs = ['-j' + getJobs()].concat(args);
 
       xProcess.spawn(make, fullArgs, {}, function (err) {
         callback(err ? 'make failed: ' + err : null);
@@ -326,7 +321,6 @@ cmd.build = function (msg, resp) {
           makeRun(
             buildDir,
             results.taskMSYS.cmake ? exports.getMakeTool() : 'make',
-            results.taskMSYS.cmake,
             resp,
             callback
           );
