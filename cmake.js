@@ -94,6 +94,14 @@ var makeRun = function (makeDir, make, resp, callback) {
   );
 };
 
+const getCFLAGS = () => {
+  let flags = '-O2 -g0 -mtune=native';
+  if (!process.arch.startsWith('arm')) {
+    flags += ' -march=native';
+  }
+  return flags;
+};
+
 /* TODO: must be generic. */
 var bootstrapRun = function (cmakeDir, resp, callback) {
   const pkgConfig = require('xcraft-core-etc')(null, resp).load(
@@ -106,7 +114,7 @@ var bootstrapRun = function (cmakeDir, resp, callback) {
     `--prefix=${path.resolve(pkgConfig.out)}`,
     `--parallel=${getJobs()}`,
     '--',
-    "-DCMAKE_CXX_FLAGS_RELEASE='-O2 -g0 -march=native -mtune=native'",
+    `-DCMAKE_CXX_FLAGS_RELEASE='${getCFLAGS()}'`,
     '-DCMAKE_BUILD_TYPE=Release',
   ];
 
@@ -145,7 +153,7 @@ var cmakeRun = function (srcDir, resp, callback) {
   xFs.mkdir(buildDir);
 
   var args = [
-    "-DCMAKE_CXX_FLAGS_RELEASE='-O2 -g0 -march=native -mtune=native'",
+    `-DCMAKE_CXX_FLAGS_RELEASE='${getCFLAGS()}'`,
     '-DCMAKE_COLOR_MAKEFILE=OFF',
     '-DCMAKE_BUILD_TYPE=Release',
     '-DCMAKE_INSTALL_PREFIX:PATH=' + path.resolve(pkgConfig.out),
