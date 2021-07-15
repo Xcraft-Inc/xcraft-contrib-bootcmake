@@ -114,6 +114,7 @@ var bootstrapRun = function (cmakeDir, resp, callback) {
     `--prefix=${path.resolve(pkgConfig.out)}`,
     `--parallel=${getJobs()}`,
     '--',
+    '-DBUILD_CursesDialog=OFF',
     '-DCMAKE_USE_OPENSSL=OFF',
     `-DCMAKE_CXX_FLAGS_RELEASE='${getCFLAGS()}'`,
     '-DCMAKE_BUILD_TYPE=Release',
