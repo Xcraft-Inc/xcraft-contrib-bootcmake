@@ -79,11 +79,13 @@ var makeRun = function (makeDir, make, resp, callback) {
     function (args, callback) {
       var fullArgs = ['-j' + getJobs()].concat(args);
 
+      xEnv.devrootUpdate('bootstrap');
       xProcess.spawn(make, fullArgs, {}, function (err) {
         callback(err ? 'make failed: ' + err : null);
       });
     },
     function (err) {
+      xEnv.devrootUpdate();
       if (!err) {
         resp.log.info('cmake is built and installed');
       }
@@ -136,7 +138,9 @@ var bootstrapRun = function (cmakeDir, resp, callback) {
     exec = 'sh.exe';
   }
 
+  xEnv.devrootUpdate('bootstrap');
   xProcess.spawn(exec, args, {}, function (err) {
+    xEnv.devrootUpdate();
     process.chdir(currentDir);
     callback(err ? 'bootstrap failed: ' + err : null);
   });
@@ -172,7 +176,9 @@ var cmakeRun = function (srcDir, resp, callback) {
 
   var currentDir = process.cwd();
   process.chdir(buildDir);
+  xEnv.devrootUpdate('bootstrap');
   xProcess.spawn('cmake', args, {}, function (err) {
+    xEnv.devrootUpdate();
     process.chdir(currentDir);
     callback(err ? 'cmake failed: ' + err : null);
   });
