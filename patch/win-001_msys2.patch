@@ -1,0 +1,17 @@
+--- cmake-3.20.4/Utilities/cmlibuv/src/win/winapi.h     2021-06-14 17:05:49.000000000 +0200
++++ cmake-3.20.4/Utilities/cmlibuv/src/win/winapi.h     2021-11-12 10:14:01.340967500 +0100
+@@ -4736,10 +4736,10 @@
+                        UINT         dwflags);
+
+ /* From mstcpip.h */
+-typedef struct _TCP_INITIAL_RTO_PARAMETERS {
+-  USHORT Rtt;
+-  UCHAR  MaxSynRetransmissions;
+-} TCP_INITIAL_RTO_PARAMETERS, *PTCP_INITIAL_RTO_PARAMETERS;
++//typedef struct _TCP_INITIAL_RTO_PARAMETERS {
++//  USHORT Rtt;
++//  UCHAR  MaxSynRetransmissions;
++//} TCP_INITIAL_RTO_PARAMETERS, *PTCP_INITIAL_RTO_PARAMETERS;
+
+ #ifndef TCP_INITIAL_RTO_NO_SYN_RETRANSMISSIONS
+ # define TCP_INITIAL_RTO_NO_SYN_RETRANSMISSIONS ((UCHAR) -2)
