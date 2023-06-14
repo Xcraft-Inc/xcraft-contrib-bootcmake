@@ -20,7 +20,7 @@ module.exports = [
     type: 'input',
     name: 'src',
     message: 'source URI',
-    default: 'http://www.cmake.org/files/v3.20/cmake-3.20.4.tar.gz',
+    default: 'http://www.cmake.org/files/v3.26/cmake-3.26.4.tar.gz',
   },
   {
     type: 'input',
