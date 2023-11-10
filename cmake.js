@@ -133,13 +133,16 @@ var bootstrapRun = function (cmakeDir, resp, callback) {
   fs.chmodSync('./bootstrap', 0o755);
 
   let exec = './bootstrap';
+  const env = {...process.env};
+
   if (xPlatform.getOs() === 'win') {
     args.unshift(exec);
     exec = 'sh.exe';
+    env.MSYSTEM = 'MINGW64';
   }
 
   xEnv.devrootUpdate('bootstrap');
-  xProcess.spawn(exec, args, {}, function (err) {
+  xProcess.spawn(exec, args, {env}, function (err) {
     xEnv.devrootUpdate();
     process.chdir(currentDir);
     callback(err ? 'bootstrap failed: ' + err : null);
