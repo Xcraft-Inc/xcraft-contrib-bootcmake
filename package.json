@@ -1,6 +1,6 @@
 {
   "name": "xcraft-contrib-bootcmake",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "description": "Xcraft CMake support",
   "main": "cmake.js",
   "scripts": {
